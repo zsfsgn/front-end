@@ -1,0 +1,91 @@
+ng new bus-seat-booking
+
+ng generate component seat-selection
+
+
+app.routing.ts
+
+  { path: 'home', component: SeatSelectionComponent }
+
+seat selection.html
+
+<div class="seat-selection">
+  <h2>Seat Selection</h2>
+  <div class="seats">
+    <div *ngFor="let seat of availableSeats" class="seat" [class.selected]="seat.selected" (click)="toggleSeatSelection(seat)">
+      {{ seat.name }}
+    </div>
+  </div>
+  <button (click)="proceedToBookingForm()" [disabled]="!selectedSeats.length">Proceed to Booking</button>
+</div>
+
+
+seatselection.ts
+
+ availableSeats = [
+    { id: 1, name: 'A1', selected: false },
+    { id: 2, name: 'A2', selected: false },
+    { id: 3, name: 'A3', selected: false },
+    // Add more seats as needed
+  ];
+  selectedSeats: any[] = [];
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+  toggleSeatSelection(seat: any): void {
+    seat.selected = !seat.selected;
+    if (seat.selected) {
+      this.selectedSeats.push(seat);
+    } else {
+      this.selectedSeats = this.selectedSeats.filter(s => s.id !== seat.id);
+    }
+  }
+
+  proceedToBookingForm(): void {
+    this.router.navigate(['/booking-form'], { state: { selectedSeats: this.selectedSeats } });
+  }
+
+
+
+css
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .seat-selection {
+    text-align: center;
+  }
+  
+  .seat-selection .seats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .seat-selection .seat {
+    border: 1px solid #ccc;
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    line-height: 50px;
+    cursor: pointer;
+  }
+  
+  .seat-selection .seat.selected {
+    background-color: #6ab04c;
+    color: #fff;
+  }
+
+
+router module.ts
+
+
+  { path: 'home', component:SeatSelectionComponent },
+  { path: 'booking-form', component: BookingFormComponent },
+  

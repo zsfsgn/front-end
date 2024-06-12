@@ -1,0 +1,145 @@
+
+create service
+
+ng generate service product
+
+
+
+
+
+model create
+
+
+ng generate interface product --type=model
+
+
+
+component
+
+ng generate component cart
+ng generate component product-list
+
+
+router.module.ts
+
+const routes: Routes = [
+
+{path:"home",component:ProductListComponent},
+{path:"cart",component:CartComponent},
+
+];
+
+
+
+
+app.component.html
+
+<app-product-list></app-product-list>
+<app-cart></app-cart>>
+
+
+
+product.service.ts
+
+import { Injectable } from '@angular/core';
+import { Product } from './product.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ProductService {
+
+  items: Product[] = [];
+
+  addToCart(product: Product): void {
+    this.items.push(product);
+  }
+
+  getItems(): Product[] {
+    return this.items;
+  }
+
+  clearCart(): void {
+    this.items = [];
+  }
+
+}
+
+
+
+productlist.component.ts
+
+import { Component  } from '@angular/core';
+import { ProductService } from '../product.service';
+import { Product } from '../product.model';
+@Component({
+  selector: 'app-product-list',
+  templateUrl: './product-list.component.html',
+  styleUrls: ['./product-list.component.css']
+})
+export class ProductListComponent  {
+
+  products: Product[] = [
+    { id: 1, name: 'Product 1', price: 10, imageUrl: 'assets/images/product1.jpg' },
+    { id: 2, name: 'Product 2', price: 20, imageUrl: 'assets/images/product2.jpg' },
+    { id: 3, name: 'Product 3', price: 30, imageUrl: 'assets/images/product3.jpg' }
+  ];
+
+  constructor(private p: ProductService) {}
+
+  addToCart(product: Product): void {
+    this.p.addToCart(product);
+    window.alert('Product added to cart');
+  }
+
+}
+
+
+product.component.html
+
+<!-- product-list.component.html -->
+
+<div *ngFor="let product of products">
+  <h3>{{ product.name }}</h3>
+  <p>Price: {{ product.price }}</p>
+  <img [src]="product.imageUrl" alt="{{ product.name }}">
+  <button (click)="addToCart(product)">Add to Cart</button>
+</div>
+
+
+
+cart.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { ProductService } from '../product.service';
+import { Product } from '../product.model';
+@Component({
+  selector: 'app-cart',
+  templateUrl: './cart.component.html',
+  styleUrl: './cart.component.css'
+})
+export class CartComponent implements OnInit {
+
+  items: Product[] = [];
+
+  constructor(private p: ProductService) { }
+
+  ngOnInit(): void {
+    this.items = this.p.getItems();
+  }
+
+}
+
+
+cart.component.html
+
+<!-- cart.component.html -->
+
+<h2>Cart</h2>
+<ul>
+  <li *ngFor="let item of items">
+    {{ item.name }} - {{ item.price }}
+  </li>
+</ul>
+
+
